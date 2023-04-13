@@ -1,13 +1,12 @@
 import React from 'react';
 
 const PostItem = (props) => {
-    console.log(props);
     return (
         <div className='post'>
             <div className='post__content'>
-                <strong>1. Javascript</strong>
+                <strong>{props.post.id}. {props.post.title}</strong>
                 <div>
-                    Javascript - lang prog
+                    {props.post.body}
                 </div>
             </div>
             <div className='post__btns'>
