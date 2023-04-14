@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './styles/App.css';
 import PostList from './components/PostList';
 import MyButton from './components/UI/button/MyButton';
+import MyInput from './components/UI/input/MyInput';
 
 function App() {
   const [posts, setPosts] = useState([
@@ -13,9 +14,9 @@ function App() {
   return (
     <div className="App">
       <form>
-        <input type='text' placeholder='Name of post'/>
-        <input type='text' placeholder='desc of post'/>
-        <MyButton>Create post</MyButton>
+        <MyInput type='text' placeholder='Name of post'/>
+        <MyInput type='text' placeholder='desc of post'/>
+        <MyButton disabled>Create post</MyButton>
       </form>
       <PostList posts={posts} title='List of posts 1' />
     </div>
