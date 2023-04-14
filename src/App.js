@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './styles/App.css';
 import PostList from './components/PostList';
 import MyButton from './components/UI/button/MyButton';
@@ -11,12 +11,31 @@ function App() {
     {id: 3, title: 'Javascript 3', body: 'desc'},
   ])
 
+  const [title, setTitle] = useState('')
+
+  const bodyInputRef = useRef();
+
+  const addNewPost = (e) => {
+    e.preventDefault()
+    console.log(title)
+    console.log(bodyInputRef.current.value)
+  }
+
   return (
     <div className="App">
       <form>
-        <MyInput type='text' placeholder='Name of post'/>
-        <MyInput type='text' placeholder='desc of post'/>
-        <MyButton disabled>Create post</MyButton>
+        <MyInput 
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          type='text' 
+          placeholder='Name of post'
+        />
+        <MyInput 
+          ref={bodyInputRef}
+          type='text' 
+          placeholder='desc of post'
+        />
+        <MyButton onClick={addNewPost}>Create post</MyButton>
       </form>
       <PostList posts={posts} title='List of posts 1' />
     </div>
