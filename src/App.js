@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import './styles/App.css';
 import PostList from './components/PostList';
 import MyButton from './components/UI/button/MyButton';
@@ -16,6 +16,11 @@ function App() {
   const [modal, setModal] = useState(false);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
 
+  useEffect(() => {
+    console.log('USE EFFECT')
+    fetchPosts()
+  }, [])
+
   const createPost = (newPost) => {
     setPosts([...posts, newPost])
     setModal(false)
@@ -23,7 +28,7 @@ function App() {
 
   async function fetchPosts() {
     const response = await axios.get('https://jsonplaceholder.typicode.com/posts')
-    console.log(response.data)
+    setPosts(response.data)
   }
 
   const removePost = (post) => {
