@@ -12,16 +12,17 @@ import axios from 'axios';
 import PostService from './API/PostService';
 import Loader from './components/UI/Loader/Loader';
 import { useFetching } from './hooks/useFetching';
-import { getPageCount } from './utils/pages';
+import { getPageCount, getPagesArray } from './utils/pages';
 
 function App() {
   const [posts, setPosts] = useState([])
-  const [filter, setFilter] = useState({sort: '', query: ''})
+  const [filter, setFilter] = useState({ sort: '', query: '' })
   const [modal, setModal] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  let pagesArray = getPagesArray(totalPages);
 
   const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
     const response = await PostService.getAll(limit, page);
@@ -29,10 +30,10 @@ function App() {
     const totalCount = response.headers['x-total-count']
     setTotalPages(getPageCount(totalCount, limit));
   })
-  
+
   useEffect(() => {
     fetchPosts()
-  }, [])
+  }, [page])
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost])
@@ -43,17 +44,22 @@ function App() {
     setPosts(posts.filter(p => p.id != post.id))
   }
 
+  const changePage = (page) => {
+    setPage(page)
+    fetchPosts(page)
+  }
+
   return (
     <div className="App">
       <button onClick={fetchPosts}>get posts</button>
-      <MyButton style={{marginTop: 30}} onClick={() => setModal(true)}>
+      <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Create Post
       </MyButton>
       <MyModal visible={modal} setVisible={setModal}>
-        <PostForm create={createPost}/>
+        <PostForm create={createPost} />
       </MyModal>
-      <hr style={{margin: '15px 0'}}/>
-      <PostFilter 
+      <hr style={{ margin: '15px 0' }} />
+      <PostFilter
         filter={filter}
         setFilter={setFilter}
       />
@@ -61,9 +67,19 @@ function App() {
         <h1>Error: {postError}</h1>
       }
       {isPostsLoading
-        ? <div style={{display: 'flex', justifyContent: 'center', marginTop: 50}}><Loader /></div>
+        ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
         : <PostList remove={removePost} posts={sortedAndSearchedPosts} title='List of posts JS' />
-      }
+      } 
+      <div className='page__wrapper'>
+        {pagesArray.map(p =>
+          <span 
+            onClick={() => changePage(p)}
+            key={p} 
+            className={page === p ? 'page page__current' : 'page'}>
+            {p}
+          </span>
+        )}
+      </div>
     </div>
   );
 }
