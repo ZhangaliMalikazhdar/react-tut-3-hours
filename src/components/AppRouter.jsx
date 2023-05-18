@@ -11,6 +11,7 @@ const AppRouter = () => {
             <Route path="/posts" element={<Posts />} />
             {/* <Route element={<Redirect to='/posts' />} /> */}
             <Route path='/error' element={<Error />}/>
+            <Route path='*' element={<Navigate to='/error' replace />} />
             {/* <Navigate to="/posts"></Navigate> */}
             {/* <Redirect to='/error'></Redirect> */}
       </Routes>
