@@ -4,19 +4,36 @@ import About from '../pages/About';
 import Posts from '../pages/Posts';
 import Error from '../pages/Error';
 import PostIdPage from '../pages/PostIdPage';
+import { privateRoutes, publicRoutes } from '../router';
 
 const AppRouter = () => {
+    const isAuth = false;
     return (
-        <Routes>
-            <Route path="/about" element={<About />} />
-            <Route exact path="/posts" element={<Posts />} />
-            <Route exact path="/posts/:id" element={<PostIdPage />} />
-            {/* <Route element={<Redirect to='/posts' />} /> */}
-            <Route path='/error' element={<Error />}/>
-            <Route path='*' element={<Navigate to='/error' replace />} />
-            {/* <Navigate to="/posts"></Navigate> */}
-            {/* <Redirect to='/error'></Redirect> */}
-      </Routes>
+            isAuth
+                ?
+                <Routes>
+                    {privateRoutes.map(route => 
+                        <Route 
+                            key={route}
+                            Component={route.component}
+                            path={route.path}
+                            exact={route.exact}
+                        />                   
+                    )}
+                    <Route path='*' element={<Navigate to='/posts' replace />} />
+                </Routes>
+                :
+                <Routes>
+                    {publicRoutes.map(route => 
+                            <Route 
+                                key={route}
+                                Component={route.component}
+                                path={route.path}
+                                exact={route.exact}
+                            />  
+                        )}
+                    <Route path='*' element={<Navigate to='/login' replace />} />
+                </Routes>
     );
 };
 
