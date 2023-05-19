@@ -27,7 +27,8 @@
 }
 
 .post__btns {
-    margin: 10px 10px 10px 10px;
+    display: flex;
+    /* margin: 10px 10px 10px 10px; */
 }
 
 .post-enter {
