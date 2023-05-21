@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PostList from '../components/PostList';
 import MyButton from '../components/UI/button/MyButton';
 import PostForm from '../components/PostForm';
@@ -10,6 +10,7 @@ import Loader from '../components/UI/Loader/Loader';
 import { useFetching } from '../hooks/useFetching';
 import { getPageCount } from '../utils/pages';
 import Pagination from '../components/UI/pagination/Pagination';
+import { useObserver } from '../hooks/useObserver';
 
 function Posts() {
   const [posts, setPosts] = useState([])
@@ -19,17 +20,23 @@ function Posts() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  const lastElement = useRef();
+  console.log(lastElement)
 
   const [fetchPosts, isPostsLoading, postError] = useFetching(async (limit, page) => {
     const response = await PostService.getAll(limit, page);
-    setPosts(response.data)
+    setPosts([...posts, ...response.data])
     const totalCount = response.headers['x-total-count']
     setTotalPages(getPageCount(totalCount, limit));
   })
 
+  useObserver(lastElement, page < totalPages, isPostsLoading, () => {
+    setPage(page + 1);
+  })
+
   useEffect(() => {
     fetchPosts(limit, page)
-  }, [])
+  }, [page])
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost])
@@ -62,10 +69,11 @@ function Posts() {
       {postError &&
         <h1>Error: {postError}</h1>
       }
-      {isPostsLoading
-        ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
-        : <PostList remove={removePost} posts={sortedAndSearchedPosts} title='List of posts JS' />
-      } 
+      <PostList remove={removePost} posts={sortedAndSearchedPosts} title='List of posts JS' />
+      <div ref={lastElement} style={{height: 20, background: 'red'}}></div>
+      {isPostsLoading &&
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
+      }
       <Pagination 
         page={page} 
         changePage={changePage} 
