@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter, Routes, Route, Link, Switch, Redirect, Navigate } from 'react-router-dom';
 import About from '../pages/About';
 import Posts from '../pages/Posts';
 import Error from '../pages/Error';
 import PostIdPage from '../pages/PostIdPage';
 import { privateRoutes, publicRoutes } from '../router';
+import { AuthContext } from '../context';
 
 const AppRouter = () => {
-    const isAuth = false;
+    const {isAuth} = useContext(AuthContext);
+    console.log(isAuth)
     return (
             isAuth
                 ?
                 <Routes>
                     {privateRoutes.map(route => 
                         <Route 
-                            key={route}
+                            key={route.path}
                             Component={route.component}
                             path={route.path}
                             exact={route.exact}
@@ -26,7 +28,7 @@ const AppRouter = () => {
                 <Routes>
                     {publicRoutes.map(route => 
                             <Route 
-                                key={route}
+                                key={route.path}
                                 Component={route.component}
                                 path={route.path}
                                 exact={route.exact}
